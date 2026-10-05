@@ -56,6 +56,12 @@ public struct ToastStyle: Equatable, Sendable {
   public var buttonTracking: CGFloat?
   /// Space before the icon, or before the message when there is none. Default: 15 with an icon, 14 without.
   public var leadingPadding: CGFloat?
+  /// Side of the square the icon is drawn in. Default: 19.
+  public var iconSize: CGFloat?
+  /// Space before the icon. Default: `leadingPadding`, else 15.
+  public var iconLeadingPadding: CGFloat?
+  /// Space after the message when there is no button. Default: 14.
+  public var trailingPadding: CGFloat?
   /// Height of the button. Default (`nil`): it fills the toast less 10pt above and below.
   public var buttonHeight: CGFloat?
   /// Space either side of the button title. Default: 9.
@@ -87,7 +93,10 @@ public struct ToastStyle: Equatable, Sendable {
     buttonHorizontalPadding: CGFloat? = nil,
     buttonMinWidth: CGFloat? = nil,
     buttonLeadingPadding: CGFloat? = nil,
-    buttonTrailingPadding: CGFloat? = nil
+    buttonTrailingPadding: CGFloat? = nil,
+    iconSize: CGFloat? = nil,
+    iconLeadingPadding: CGFloat? = nil,
+    trailingPadding: CGFloat? = nil
   ) {
     self.messageFont = messageFont
     self.messageColor = messageColor
@@ -109,6 +118,9 @@ public struct ToastStyle: Equatable, Sendable {
     self.buttonMinWidth = buttonMinWidth
     self.buttonLeadingPadding = buttonLeadingPadding
     self.buttonTrailingPadding = buttonTrailingPadding
+    self.iconSize = iconSize
+    self.iconLeadingPadding = iconLeadingPadding
+    self.trailingPadding = trailingPadding
   }
 }
 

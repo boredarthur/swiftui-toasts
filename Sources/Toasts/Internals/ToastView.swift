@@ -47,8 +47,8 @@ internal struct ToastView: View {
     HStack(spacing: 10) {
       if let icon = model.icon {
         icon
-          .frame(width: 19, height: 19)
-          .padding(.leading, style.leadingPadding ?? 15)
+          .frame(width: style.iconSize ?? 19, height: style.iconSize ?? 19)
+          .padding(.leading, style.iconLeadingPadding ?? style.leadingPadding ?? 15)
       } else {
         Color.clear
           .frame(width: style.leadingPadding ?? 14)
@@ -61,7 +61,7 @@ internal struct ToastView: View {
           .padding(.vertical, style.buttonHeight == nil ? 10 : 0)
       } else {
         Color.clear
-          .frame(width: 14)
+          .frame(width: style.trailingPadding ?? 14)
       }
     }
     .font(.system(size: 16, weight: .medium))

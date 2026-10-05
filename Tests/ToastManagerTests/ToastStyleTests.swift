@@ -18,6 +18,9 @@ final class ToastStyleTests: XCTestCase {
     XCTAssertNil(style.buttonMinWidth)
     XCTAssertNil(style.buttonLeadingPadding)
     XCTAssertNil(style.buttonTrailingPadding)
+    XCTAssertNil(style.iconSize)
+    XCTAssertNil(style.iconLeadingPadding)
+    XCTAssertNil(style.trailingPadding)
   }
 
   func testDetailIsOptionalAndKept() {
@@ -37,6 +40,9 @@ final class ToastStyleTests: XCTestCase {
     XCTAssertEqual(environment.toastStyle, style)
     XCTAssertNotEqual(ToastStyle(buttonHeight: 34), ToastStyle())
     XCTAssertNotEqual(ToastStyle(messageTracking: -0.32), ToastStyle())
+    XCTAssertNotEqual(ToastStyle(iconSize: 20), ToastStyle())
+    XCTAssertNotEqual(ToastStyle(iconLeadingPadding: 16), ToastStyle())
+    XCTAssertNotEqual(ToastStyle(trailingPadding: 20), ToastStyle())
     XCTAssertNotEqual(environment.toastStyle, ToastStyle())
   }
 

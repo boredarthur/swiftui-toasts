@@ -122,7 +122,10 @@ ContentView()
     buttonHorizontalPadding: 14,       // default 9
     buttonMinWidth: 0,                 // default 64
     buttonLeadingPadding: 4,           // default 0
-    buttonTrailingPadding: 7           // default 10
+    buttonTrailingPadding: 7,          // default 10
+    iconSize: 20,                      // default 19
+    iconLeadingPadding: 16,            // default: leadingPadding, else 15
+    trailingPadding: 20                // after the message when there is no button; default 14
   ))
 ```
 
