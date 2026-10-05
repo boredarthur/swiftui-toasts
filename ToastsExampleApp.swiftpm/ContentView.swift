@@ -31,6 +31,16 @@ struct ContentView: View {
           presentToast(toast)
         }
 
+        Button("Show Toast with Detail") {
+          presentToast(
+            ToastValue(
+              message: "Card hidden",
+              detail: "Sign in any time from the profile button",
+              button: ToastButton(title: "Undo", action: {})
+            )
+          )
+        }
+
         Button("Show Loading Toast") {
           Task {
             try await presentToast(

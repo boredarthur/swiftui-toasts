@@ -5,6 +5,8 @@ import SwiftUI
 public struct ToastValue {
   internal var icon: AnyView?
   internal var message: String
+  /// An optional second line, under the message.
+  internal var detail: String?
   internal var button: ToastButton?
   /// If nil, the toast will persist and not disappear. Used when displaying a loading toast.
   internal var duration: TimeInterval?
@@ -14,16 +16,19 @@ public struct ToastValue {
   /// - Parameters:
   ///   - icon: An optional view to display as an icon in the toast.
   ///   - message: The text content of the toast.
+  ///   - detail: An optional second line shown under the message.
   ///   - button: An optional action button to display in the toast.
   ///   - duration: How long the toast should be displayed before automatically dismissing, in seconds. Clamped between 0 and 10 seconds. Default is 3.0.
   public init(
     icon: (any View)? = nil,
     message: String,
+    detail: String? = nil,
     button: ToastButton? = nil,
     duration: TimeInterval = 3.0
   ) {
     self.icon = icon.map { AnyView($0) }
     self.message = message
+    self.detail = detail
     self.button = button
     self.duration = min(max(0, duration), 10)
   }
@@ -31,11 +36,13 @@ public struct ToastValue {
   internal init(
     icon: (any View)? = nil,
     message: String,
+    detail: String? = nil,
     button: ToastButton? = nil,
     duration: TimeInterval? = nil
   ) {
     self.icon = icon.map { AnyView($0) }
     self.message = message
+    self.detail = detail
     self.button = button
     self.duration = duration
   }

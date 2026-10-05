@@ -7,6 +7,7 @@ internal final class ToastManager: ObservableObject {
   @Published internal private(set) var models: [ToastModel] = []
   @Published internal private(set) var isAppeared = false
   @Published internal var safeAreaInsets: EdgeInsets = .init()
+  @Published internal var style = ToastStyle()
   private var dismissOverlayTask: Task<Void, any Error>?
 
   internal var isPresented: Bool {
@@ -25,7 +26,7 @@ internal final class ToastManager: ObservableObject {
     dismissOverlayTask = nil
     let model = ToastModel(value: toast)
     models.append(model)
-    announceToAccessibility(toast.message)
+    announceToAccessibility(accessibilityText(for: toast))
     return model
   }
 
@@ -64,17 +65,21 @@ internal final class ToastManager: ObservableObject {
       withAnimation(.spring(duration: 0.3)) {
         model.value = successToast
       }
-      announceToAccessibility(successToast.message)
+      announceToAccessibility(accessibilityText(for: successToast))
       return value
     } catch {
       let failureToast = onFailure(error)
       withAnimation(.spring(duration: 0.3)) {
         model.value = failureToast
       }
-      announceToAccessibility(failureToast.message)
+      announceToAccessibility(accessibilityText(for: failureToast))
       throw error
     }
   }
+}
+
+private func accessibilityText(for toast: ToastValue) -> String {
+  [toast.message, toast.detail].compactMap { $0 }.joined(separator: ". ")
 }
 
 internal let removalAnimationDuration: Double = 0.3

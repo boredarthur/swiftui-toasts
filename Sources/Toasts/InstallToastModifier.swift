@@ -18,6 +18,7 @@ extension View {
 private struct InstallToastModifier: ViewModifier {
   var position: ToastPosition
   @State private var manager = ToastManager()
+  @Environment(\.toastStyle) private var style
   func body(content: Content) -> some View {
     content
       .environment(
@@ -29,6 +30,9 @@ private struct InstallToastModifier: ViewModifier {
       }
       ._onChange(of: position, initial: true) {
         manager.position = $1
+      }
+      ._onChange(of: style, initial: true) {
+        manager.style = $1
       }
       .addToastSafeAreaObserver()
       .onPreferenceChange(SafeAreaInsetsPreferenceKey.self) {
