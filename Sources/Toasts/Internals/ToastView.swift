@@ -2,18 +2,45 @@ import SwiftUI
 
 internal struct ToastView: View {
   @ObservedObject var model: ToastModel
+  var style = ToastStyle()
   @Environment(\.colorScheme) private var colorScheme
 
   private var isDark: Bool { colorScheme == .dark }
+  private var height: CGFloat { style.height ?? 48 }
 
   var body: some View {
-    main
-      ._background {
-        Capsule().fill(Color.toastBackground)
-      }
-      .frame(height: 48)
-      .compositingGroup()
-      .shadow(color: .primary.opacity(isDark ? 0.0 : 0.1), radius: 16, y: 8.0)
+    sized(
+      main
+        ._background { backgroundShape }
+    )
+    .compositingGroup()
+    .shadow(
+      color: style.shadow?.color ?? .primary.opacity(isDark ? 0.0 : 0.1),
+      radius: style.shadow?.radius ?? 16,
+      x: style.shadow?.x ?? 0,
+      y: style.shadow?.y ?? 8.0
+    )
+  }
+
+  /// A single line keeps its fixed height; with a detail line the toast may grow past it.
+  @ViewBuilder
+  private func sized(_ content: some View) -> some View {
+    if model.detail == nil {
+      content.frame(height: height)
+    } else {
+      // The spacers beside the text would otherwise stretch to whatever height is offered.
+      content.fixedSize(horizontal: false, vertical: true).frame(minHeight: height)
+    }
+  }
+
+  @ViewBuilder
+  private var backgroundShape: some View {
+    let fill = style.background ?? Color.toastBackground
+    if let radius = style.cornerRadius {
+      RoundedRectangle(cornerRadius: radius, style: .continuous).fill(fill)
+    } else {
+      Capsule().fill(fill)
+    }
   }
 
   private var main: some View {
@@ -21,24 +48,17 @@ internal struct ToastView: View {
       if let icon = model.icon {
         icon
           .frame(width: 19, height: 19)
-          .padding(.leading, 15)
+          .padding(.leading, style.leadingPadding ?? 15)
       } else {
         Color.clear
-          .frame(width: 14)
+          .frame(width: style.leadingPadding ?? 14)
       }
-      Text(model.message)
-        .lineLimit(1)
-        .truncationMode(.tail)
-        .id(model.message)
-        .transition(.asymmetric(
-            insertion: .opacity
-                .animation(.spring(duration: 0.3).delay(0.3)),
-            removal: .opacity
-                .animation(.spring(duration: 0.3))
-        ))
+      text
       if let button = model.button {
         buttonView(button)
-          .padding([.top, .bottom, .trailing], 10)
+          .padding(.leading, style.buttonLeadingPadding ?? 0)
+          .padding(.trailing, style.buttonTrailingPadding ?? 10)
+          .padding(.vertical, style.buttonHeight == nil ? 10 : 0)
       } else {
         Color.clear
           .frame(width: 14)
@@ -47,18 +67,53 @@ internal struct ToastView: View {
     .font(.system(size: 16, weight: .medium))
   }
 
+  @ViewBuilder
+  private var text: some View {
+    if let detail = model.detail {
+      VStack(alignment: .leading, spacing: 1) {
+        messageText
+        Text(detail)
+          .font(style.detailFont ?? .system(size: 13))
+          ._foregroundColor(style.detailColor ?? .secondary)
+          .lineLimit(2)
+      }
+      .padding(.vertical, style.detailVerticalPadding ?? 8)
+    } else {
+      messageText
+    }
+  }
+
+  private var messageText: some View {
+    Text(model.message)
+      .kerning(style.messageTracking ?? 0)
+      .font(style.messageFont)
+      ._foregroundColor(style.messageColor)
+      .lineLimit(1)
+      .truncationMode(.tail)
+      .id(model.message)
+      .transition(.asymmetric(
+          insertion: .opacity
+              .animation(.spring(duration: 0.3).delay(0.3)),
+          removal: .opacity
+              .animation(.spring(duration: 0.3))
+      ))
+  }
+
   private func buttonView(_ button: ToastButton) -> some View {
     Button {
       button.action()
     } label: {
       ZStack {
         Capsule()
-          .fill(button.color.opacity(isDark ? 0.15 : 0.07))
+          .fill(style.buttonBackground ?? button.color.opacity(isDark ? 0.15 : 0.07))
         Text(button.title)
+          .kerning(style.buttonTracking ?? 0)
+          .font(style.buttonFont)
           ._foregroundColor(button.color)
-          .padding(.horizontal, 9)
+          .padding(.horizontal, style.buttonHorizontalPadding ?? 9)
       }
-      .frame(minWidth: 64)
+      .frame(minWidth: style.buttonMinWidth ?? 64)
+      .frame(height: style.buttonHeight)
       .fixedSize(horizontal: true, vertical: false)
     }
     .buttonStyle(.plain)

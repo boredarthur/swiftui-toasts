@@ -17,6 +17,7 @@ A toast notification library for SwiftUI.
 - Slide gesture to dismiss
 - Loading state interface with async/await
 - Full VoiceOver compatibility for inclusive user experience
+- Optional second line and an environment-driven `ToastStyle` (fork additions, see [Styling](#styling))
 
 ## Usage
 
@@ -92,6 +93,51 @@ let toast = ToastValue(
 )
 ```
 
+## Styling
+
+> This fork adds `ToastStyle` and `ToastValue.detail`. With neither used, toasts look and behave exactly like 1.1.2.
+
+Style every toast once, after `installToast`:
+
+```swift
+ContentView()
+  .installToast(position: .top)
+  .toastStyle(ToastStyle(
+    messageFont: .headline,
+    messageColor: .white,
+    detailFont: .footnote,
+    detailColor: .gray,
+    buttonFont: .headline.bold(),
+    background: Color(white: 0.14),
+    buttonBackground: .white.opacity(0.12),
+    cornerRadius: nil,                 // nil = capsule
+    shadow: .init(color: .black.opacity(0.5), radius: 16, y: 12),
+    height: 48,                        // single line; the minimum height with a detail line
+    detailVerticalPadding: 8,
+    edgeSpacing: 6,                    // gap to the safe area on the positioned edge; default 16
+    messageTracking: -0.32,
+    buttonTracking: -0.32,
+    leadingPadding: 20,                // before the icon or message; default 15 / 14
+    buttonHeight: 34,                  // default: fills the toast less 10pt above and below
+    buttonHorizontalPadding: 14,       // default 9
+    buttonMinWidth: 0,                 // default 64
+    buttonLeadingPadding: 4,           // default 0
+    buttonTrailingPadding: 7           // default 10
+  ))
+```
+
+Every field is optional; `nil` keeps the built-in value. Add a second line with `detail`:
+
+```swift
+presentToast(ToastValue(
+  message: "Card hidden",
+  detail: "Sign in any time from the profile button",
+  button: ToastButton(title: "Undo", color: .white) { /* … */ }
+))
+```
+
+A toast without a detail line keeps its fixed height; one with a detail grows to fit it.
+
 ## Custom SafeArea Handling
 
 If you need to manually control the safe area insets for toasts (e.g., in a custom view hierarchy or when using multiple tabs), you can use the `addToastSafeAreaObserver` modifier:
@@ -123,3 +169,9 @@ This modifier helps the toast system correctly detect and respond to safe area c
 - iOS 14.0+
 - Swift 6.1+
 - Xcode 16.4+
+
+## Credits
+
+Toasts is by [sunghyun-k](https://github.com/sunghyun-k/swiftui-toasts), MIT licensed (see `LICENSE.md`). This fork
+([boredarthur/swiftui-toasts](https://github.com/boredarthur/swiftui-toasts)) adds `ToastStyle` and `ToastValue.detail`
+and keeps everything else as it was.

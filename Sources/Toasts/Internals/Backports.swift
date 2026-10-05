@@ -22,6 +22,16 @@ extension View {
     }
   }
 
+  /// Leaves the colour alone when there is none to apply.
+  @ViewBuilder
+  internal func _foregroundColor(_ color: Color?) -> some View {
+    if let color {
+      _foregroundColor(color)
+    } else {
+      self
+    }
+  }
+
   @ViewBuilder
   internal func _onChange<V: Equatable>(
     of value: V,
