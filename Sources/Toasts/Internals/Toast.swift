@@ -4,6 +4,8 @@ import Foundation
 @dynamicMemberLookup
 internal final class ToastModel: ObservableObject, Identifiable {
   @Published internal var value: ToastValue
+  /// Bumped to restart the dismiss timer, which the view observes.
+  @Published internal var restartCount = 0
   internal init(value: ToastValue) {
     self.value = value
   }

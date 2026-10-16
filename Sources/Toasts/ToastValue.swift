@@ -10,6 +10,12 @@ public struct ToastValue {
   internal var button: ToastButton?
   /// If nil, the toast will persist and not disappear. Used when displaying a loading toast.
   internal var duration: TimeInterval?
+  /// Spoken by VoiceOver instead of the message and detail.
+  internal var accessibilityMessage: String?
+  /// Presenting a toast with the key of a visible one updates that toast instead of adding another.
+  internal var key: AnyHashable?
+  /// Called once when the toast is removed by its timer or a swipe.
+  internal var onDismiss: (() -> Void)?
 
   /// Creates a new toast with the specified content and behavior.
   ///
@@ -19,18 +25,26 @@ public struct ToastValue {
   ///   - detail: An optional second line shown under the message.
   ///   - button: An optional action button to display in the toast.
   ///   - duration: How long the toast should be displayed before automatically dismissing, in seconds. Clamped between 0 and 10 seconds. Default is 3.0.
+  ///   - accessibilityMessage: What VoiceOver announces instead of the message and detail. Default is nil.
+  ///   - key: Presenting a toast with the same non-nil key as a visible one updates that toast in place and
+  ///     restarts its timer instead of adding another. The replaced value's `onDismiss` is kept unless the new
+  ///     value has its own.
+  ///   - onDismiss: Called once when the toast is removed by its timer or a swipe, not when it is replaced by key.
   public init(
     icon: (any View)? = nil,
     message: String,
     detail: String? = nil,
     button: ToastButton? = nil,
-    duration: TimeInterval = 3.0
+    duration: TimeInterval = 3.0,
+    accessibilityMessage: String? = nil,
+    key: AnyHashable? = nil,
+    onDismiss: (() -> Void)? = nil
   ) {
-    self.icon = icon.map { AnyView($0) }
-    self.message = message
-    self.detail = detail
-    self.button = button
-    self.duration = min(max(0, duration), 10)
+    let clamped: TimeInterval? = min(max(0, duration), 10)
+    self.init(
+      icon: icon, message: message, detail: detail, button: button, duration: clamped,
+      accessibilityMessage: accessibilityMessage, key: key, onDismiss: onDismiss
+    )
   }
   @_disfavoredOverload
   internal init(
@@ -38,13 +52,19 @@ public struct ToastValue {
     message: String,
     detail: String? = nil,
     button: ToastButton? = nil,
-    duration: TimeInterval? = nil
+    duration: TimeInterval? = nil,
+    accessibilityMessage: String? = nil,
+    key: AnyHashable? = nil,
+    onDismiss: (() -> Void)? = nil
   ) {
     self.icon = icon.map { AnyView($0) }
     self.message = message
     self.detail = detail
     self.button = button
     self.duration = duration
+    self.accessibilityMessage = accessibilityMessage
+    self.key = key
+    self.onDismiss = onDismiss
   }
 }
 
