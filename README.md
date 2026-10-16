@@ -141,6 +141,22 @@ presentToast(ToastValue(
 
 A toast without a detail line keeps its fixed height; one with a detail grows to fit it.
 
+## Replace, VoiceOver text and dismissal (1.4.0)
+
+All three are optional `ToastValue` parameters; leave them out and nothing changes.
+
+```swift
+presentToast(ToastValue(
+  message: "Saving… 40%",
+  accessibilityMessage: "Saving, forty percent",  // spoken instead of message/detail
+  key: "upload",                                  // same key as a visible toast: update it, don't stack
+  onDismiss: { /* … */ }                          // once, when the toast is removed
+))
+```
+
+- `key`: presenting a value whose non-nil `key` matches a visible toast updates that toast in place (message, detail, icon, button, duration, accessibility text), restarts its timer and announces the new text. With no match, or a `nil` key, a new toast is added as before.
+- `onDismiss`: called once when the toast goes away (its timer or a swipe). A replace keeps the same toast: the new value's `onDismiss` is used if it has one, otherwise the earlier one is kept, and it fires on removal.
+
 ## Custom SafeArea Handling
 
 If you need to manually control the safe area insets for toasts (e.g., in a custom view hierarchy or when using multiple tabs), you can use the `addToastSafeAreaObserver` modifier:
@@ -176,5 +192,5 @@ This modifier helps the toast system correctly detect and respond to safe area c
 ## Credits
 
 Toasts is by [sunghyun-k](https://github.com/sunghyun-k/swiftui-toasts), MIT licensed (see `LICENSE.md`). This fork
-([boredarthur/swiftui-toasts](https://github.com/boredarthur/swiftui-toasts)) adds `ToastStyle` and `ToastValue.detail`
+([boredarthur/swiftui-toasts](https://github.com/boredarthur/swiftui-toasts)) adds `ToastStyle`, `ToastValue.detail`, `accessibilityMessage`, `key` and `onDismiss`
 and keeps everything else as it was.

@@ -20,6 +20,9 @@ internal struct ToastInteractingView: View {
       ._onChange(of: model.duration == nil, initial: true) { _, newValue in
         startDismissTask()
       }
+      ._onChange(of: model.restartCount) { _, _ in
+        if !isDragging { startDismissTask() }
+      }
   }
 
   @MainActor
