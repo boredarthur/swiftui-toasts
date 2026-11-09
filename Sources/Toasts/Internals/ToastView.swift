@@ -9,28 +9,19 @@ internal struct ToastView: View {
   private var height: CGFloat { style.height ?? 48 }
 
   var body: some View {
-    sized(
-      main
-        ._background { backgroundShape }
-    )
-    .compositingGroup()
-    .shadow(
-      color: style.shadow?.color ?? .primary.opacity(isDark ? 0.0 : 0.1),
-      radius: style.shadow?.radius ?? 16,
-      x: style.shadow?.x ?? 0,
-      y: style.shadow?.y ?? 8.0
-    )
-  }
-
-  /// A single line keeps its fixed height; with a detail line the toast may grow past it.
-  @ViewBuilder
-  private func sized(_ content: some View) -> some View {
-    if model.detail == nil {
-      content.frame(height: height)
-    } else {
+    main
+      // `height` is a minimum: one-line toasts keep it, wrapped or detailed ones grow.
+      .frame(minHeight: height)
+      ._background { backgroundShape }
       // The spacers beside the text would otherwise stretch to whatever height is offered.
-      content.fixedSize(horizontal: false, vertical: true).frame(minHeight: height)
-    }
+      .fixedSize(horizontal: false, vertical: true)
+      .compositingGroup()
+      .shadow(
+        color: style.shadow?.color ?? .primary.opacity(isDark ? 0.0 : 0.1),
+        radius: style.shadow?.radius ?? 16,
+        x: style.shadow?.x ?? 0,
+        y: style.shadow?.y ?? 8.0
+      )
   }
 
   @ViewBuilder
@@ -88,7 +79,7 @@ internal struct ToastView: View {
       .kerning(style.messageTracking ?? 0)
       .font(style.messageFont)
       ._foregroundColor(style.messageColor)
-      .lineLimit(1)
+      .lineLimit(2)
       .truncationMode(.tail)
       .id(model.message)
       .transition(.asymmetric(
@@ -162,6 +153,17 @@ internal struct ToastView: View {
             button: nil
           )
       )
+    )
+    ToastView(
+      model: .init(
+        value:
+          .init(
+            icon: Image(systemName: "info.circle"),
+            message: "This is a much longer toast message that has to wrap onto a second line",
+            button: nil
+          )
+      ),
+      style: ToastStyle(cornerRadius: 24)
     )
     ToastView(
       model: .init(
